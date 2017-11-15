@@ -1,8 +1,6 @@
 package m2ila.AOC.strategy;
 
-import java.util.concurrent.ExecutionException;
-
-public class AtomicDiffusion implements AlgoDiffusion {
+public class SequentialDiffusion implements AlgoDiffusion {
 
 	private GeneratorImpl generator;
 	
@@ -11,15 +9,11 @@ public class AtomicDiffusion implements AlgoDiffusion {
 	}
 	
 	public void configure() {
-	}
-	
+	}	
+
 	public void execute() {
 		this.generator.getCanals().forEach(c->{
-			try {
-				c.update(this.generator).get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
+			c.update(this.generator);
 		});
 	}
 

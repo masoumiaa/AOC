@@ -15,15 +15,15 @@ public class GeneratorImpl implements Generator{
 	
 	private Integer v = 0;
 	private List<ObserverGenerator> observers = new ArrayList<ObserverGenerator>();;
-	private List<AlgoDiffusion> algos = new ArrayList<AlgoDiffusion>();
+	private AlgoDiffusion algo = new AtomicDiffusion();
 	private List<Canal> canals = new ArrayList<Canal>();
 	
 	public void attach(ObserverAsync<Generator> c) {
-		this.canals.add((Canal) c);
+		this.getCanals().add((Canal) c);
 	}
 
 	public void detach(ObserverAsync<Generator> c) {
-		this.canals.remove(c);
+		this.getCanals().remove(c);
 	}
 	
 	public Integer getValue() {
@@ -31,9 +31,7 @@ public class GeneratorImpl implements Generator{
 	}
 
 	public void notifyCanals() {
-		this.canals.forEach(c->{
-			c.update(this);
-		});
+		algo.execute();
 	}
 
 	public void change() {
@@ -43,5 +41,13 @@ public class GeneratorImpl implements Generator{
 
 	private void generateValue() {
 		this.v = (int) (Math.random()*(60+1));
+	}
+
+	public List<Canal> getCanals() {
+		return canals;
+	}
+
+	public void setCanals(List<Canal> canals) {
+		this.canals = canals;
 	}
 }
