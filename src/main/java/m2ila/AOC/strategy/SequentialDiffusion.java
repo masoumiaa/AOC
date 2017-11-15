@@ -4,7 +4,7 @@ public class SequentialDiffusion implements AlgoDiffusion {
 
 	private GeneratorImpl generator;
 	
-	public void setGenerator(GeneratorImpl generator) {
+	public SequentialDiffusion(GeneratorImpl generator) {
 		this.generator = generator;
 	}
 	

@@ -6,7 +6,7 @@ public class AtomicDiffusion implements AlgoDiffusion {
 
 	private GeneratorImpl generator;
 	
-	public void setGenerator(GeneratorImpl generator) {
+	public AtomicDiffusion(GeneratorImpl generator) {
 		this.generator = generator;
 	}
 	
