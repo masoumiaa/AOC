@@ -14,7 +14,7 @@ public class Canal implements GeneratorAsync,ObserverGeneratorAsync{
 	private Integer v = 0;
 	private DisplayImpl display;
 	private Generator generator;
-	private ExecutorService scheduler = Executors.newFixedThreadPool(4); ;
+	private ExecutorService scheduler = Executors.newFixedThreadPool(Integer.MAX_VALUE); ;
 	
 	public void attach(Observer<Generator> o) {
 		this.display = (DisplayImpl) o;
