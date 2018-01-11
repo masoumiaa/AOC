@@ -54,7 +54,7 @@ public class GeneratorImpl implements Generator{
 	}
 
 	// Generate the value & call notifyCanals
-	public void change() {
+	public void generate() {
 		this.generateValue();
 		this.notifyCanals();
 	}

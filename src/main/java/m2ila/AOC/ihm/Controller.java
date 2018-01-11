@@ -2,6 +2,9 @@ package m2ila.AOC.ihm;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,6 +12,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import m2ila.AOC.proxy.Canal;
+import m2ila.AOC.proxy.DisplayImpl;
+import m2ila.AOC.strategy.GeneratorImpl;
 
 public class Controller implements Initializable {
 	
@@ -31,19 +37,13 @@ public class Controller implements Initializable {
 	private Button buttonStop;
 	
 	private Button[][] tab = new Button[2][2];
-	private String chosenAlgo = "";
 	
-	@FXML
-	public void startDisplay() {
-		// call generator
-    	
-	}
-	
-	@FXML
-	public void stopDisplay() {
-		// call generator
-    	
-	}
+	private String chosenAlgo = "atomic";
+	private GeneratorImpl gen;
+
+	private ScheduledExecutorService service;
+	private static final int frequence = 2000;
+	private boolean started = false;
 	
 	
 	public void initialize(URL location, ResourceBundle resources) {
@@ -57,13 +57,85 @@ public class Controller implements Initializable {
 			}
 		}
 		
+		initDisplayers();
+		
 		myComboBox.getSelectionModel().selectedItemProperty()
 	    .addListener(new ChangeListener<String>() {
 	        public void changed(ObservableValue<? extends String> observable,
 	                            String oldValue, String newValue) {
-	            chosenAlgo = newValue;
+	            
+	            chosenAlgo = getAlgo(newValue);
 	            System.out.println("Chosen Algorithm is : "+chosenAlgo);
 	        }
 	    });
+		
+		buttonStop.setDisable(true);
+	}
+	
+	@FXML
+	public void startDisplay() throws InterruptedException {
+		if(!started){
+			// set algorithm
+	    	gen.setChosenAlgo(this.chosenAlgo);
+	    	
+	    	// run generator
+	    	service = Executors.newScheduledThreadPool(1);
+			service.scheduleAtFixedRate(gen::generate, 0, frequence, TimeUnit.MILLISECONDS);
+			
+			buttonDisplay.setDisable(true);
+			buttonStop.setDisable(false);
+			started = true;
+		}
+	}
+	
+	@FXML
+	public void stopDisplay() {
+		if (started && (service != null)) {
+			service.shutdown();
+			started = false;
+			buttonDisplay.setDisable(false);
+			buttonStop.setDisable(true);
+		}	
+	}
+	
+	public void initDisplayers(){
+		// Create generator
+    	gen = new GeneratorImpl();
+    	
+    	// Create Displayers
+    	DisplayImpl d1 = new DisplayImpl("Displayer 1",b00);
+    	DisplayImpl d2 = new DisplayImpl("Displayer 2",b01);
+    	DisplayImpl d3 = new DisplayImpl("Displayer 3",b10);
+    	DisplayImpl d4 = new DisplayImpl("Displayer 4",b11);
+    	
+    	// Create canals
+    	Canal c1 = new Canal();
+    	Canal c2 = new Canal();
+    	Canal c3 = new Canal();
+    	Canal c4 = new Canal();
+    	
+    	// Attach canals to generator
+    	gen.attach(c1);
+    	gen.attach(c2);
+    	gen.attach(c3);
+    	gen.attach(c4);
+    	
+    	// Attach every displayer to its canal
+    	c1.attach(d1,200);
+    	c2.attach(d2,400);
+    	c3.attach(d3,800);
+    	c4.attach(d4,1200);
+		
+	}
+	
+	public String getAlgo(String algo){
+		String algostring = "";
+		if(algo.equals("Sequential algorithm")){
+			algostring = "sequential";
+		}
+        else if(algo.equals("Atomic algorithm")){
+        	algostring = "atomic";
+        }
+		return algostring;
 	}
 }
