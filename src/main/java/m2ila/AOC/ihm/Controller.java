@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javafx.beans.value.ChangeListener;
@@ -42,8 +43,12 @@ public class Controller implements Initializable {
 	private GeneratorImpl gen;
 
 	private ScheduledExecutorService service;
+	private ScheduledExecutorService scheduler;
+	
 	private static final int frequence = 2000;
 	private boolean started = false;
+
+	private ScheduledFuture<?> action;
 	
 	
 	public void initialize(URL location, ResourceBundle resources) {
@@ -78,9 +83,12 @@ public class Controller implements Initializable {
 			// set algorithm
 	    	gen.setChosenAlgo(this.chosenAlgo);
 	    	
+	    	// Init scheduler
+	    	scheduler = Executors.newScheduledThreadPool(Integer.MAX_VALUE);
+	    	
 	    	// run generator
-	    	service = Executors.newScheduledThreadPool(Integer.MAX_VALUE);
-			service.scheduleAtFixedRate(gen::generate, 0, frequence, TimeUnit.MILLISECONDS);
+	    	service = Executors.newScheduledThreadPool(1);
+			action = service.scheduleAtFixedRate(gen::generate, 0, frequence, TimeUnit.MILLISECONDS);
 			
 			buttonDisplay.setDisable(true);
 			buttonStop.setDisable(false);
@@ -91,7 +99,14 @@ public class Controller implements Initializable {
 	@FXML
 	public void stopDisplay() {
 		if (started && (service != null)) {
-			service.shutdown();
+			// stop generating values
+			action.cancel(false);
+			
+			
+			//service.shutdown();
+			// stop scheduler
+			scheduler.shutdownNow();
+			
 			started = false;
 			buttonDisplay.setDisable(false);
 			buttonStop.setDisable(true);
@@ -101,6 +116,9 @@ public class Controller implements Initializable {
 	public void initDisplayers(){
 		// Create generator
     	gen = new GeneratorImpl();
+    	
+    	// Init scheduler
+    	scheduler = Executors.newScheduledThreadPool(Integer.MAX_VALUE);
     	
     	// Create Displayers
     	DisplayImpl d1 = new DisplayImpl("Displayer 1",b00);
@@ -121,10 +139,10 @@ public class Controller implements Initializable {
     	gen.attach(c4);
     	
     	// Attach every displayer to its canal
-    	c1.attach(d1,100);
-    	c2.attach(d2,400);
-    	c3.attach(d3,5000);
-    	c4.attach(d4,800);
+    	c1.attach(d1,100,scheduler);
+    	c2.attach(d2,400,scheduler);
+    	c3.attach(d3,5000,scheduler);
+    	c4.attach(d4,800,scheduler);
 		
 	}
 	

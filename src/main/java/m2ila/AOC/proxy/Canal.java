@@ -16,11 +16,12 @@ public class Canal implements GeneratorAsync,ObserverGeneratorAsync{
 	private DisplayImpl display;
 	private int latence = 0;
 	private Generator generator;
-	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(Integer.MAX_VALUE);
+	private ScheduledExecutorService scheduler;
 	
-	public void attach(Observer<Generator> o, int latence) {
+	public void attach(Observer<Generator> o, int latence, ScheduledExecutorService scheduler) {
 		this.display = (DisplayImpl) o;
 		this.latence = latence;
+		this.scheduler = scheduler;
 	}
 	
 	public void detach(Observer<Generator> o) {
