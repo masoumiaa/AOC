@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.sun.media.jfxmedia.events.NewFrameEvent;
 
-import m2ila.AOC.ObserverAsync;
+import m2ila.AOC.ActiveObject.ObserverAsync;
 import m2ila.AOC.Observer.Generator;
 import m2ila.AOC.Observer.Observer;
 import m2ila.AOC.Observer.ObserverGenerator;
@@ -18,22 +18,31 @@ public class GeneratorImpl implements Generator{
 	private AlgoDiffusion chosenAlgo;
 	private List<Canal> canals = new ArrayList<Canal>();
 	
-	// Attach Canal
+	/**
+	 *  Attach Canal
+	 */
 	public void attach(ObserverAsync<Generator> c) {
 		this.getCanals().add((Canal) c);
 	}
 	
-	// Detach canal
+	/**
+	 *  Detach canal
+	 */
 	public void detach(ObserverAsync<Generator> c) {
 		this.getCanals().remove(c);
 	}
 	
-	// get chosen algorithm
+	/**
+	 * @return chosen algorithm
+	 */
 	public AlgoDiffusion getChosenAlgo() {
 		return chosenAlgo;
 	}
 
-	// set chosen algorithm
+	/**
+	 *  set chosen algorithm
+	 * @param algoName
+	 */
 	public void setChosenAlgo(String algoName) {
 		if(algoName.equals("atomic")){
 			this.chosenAlgo = new AtomicDiffusion(this);
@@ -43,33 +52,46 @@ public class GeneratorImpl implements Generator{
 		}
 	}
 	
-	// Get value
+	/**
+	 *  Get value
+	 */
 	public Integer getValue() {
 		return this.v;
 	}
 
-	// Execute strategy algorithm
+	/**
+	 *  Execute strategy algorithm
+	 */
 	public void notifyCanals() {
 		chosenAlgo.execute();
 	}
 
-	// Generate the value & call notifyCanals
+	/**
+	 *  Generate the value & call notifyCanals
+	 */
 	public void generate() {
 		this.generateValue();
 		this.notifyCanals();
 	}
 
-	// Generate the value
+	/**
+	 *  Generate the value
+	 */
 	private void generateValue() {
 		this.v = (int) (Math.random()*(60+1));
 	}
 
-	// Get canals
+	/**
+	 * @return generator canals
+	 */
 	public List<Canal> getCanals() {
 		return canals;
 	}
 
-	// Set canals
+	/**
+	 *  Set canals
+	 * @param canals
+	 */
 	public void setCanals(List<Canal> canals) {
 		this.canals = canals;
 	}

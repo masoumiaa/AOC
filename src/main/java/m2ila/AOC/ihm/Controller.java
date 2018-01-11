@@ -70,7 +70,6 @@ public class Controller implements Initializable {
 	                            String oldValue, String newValue) {
 	            
 	            chosenAlgo = getAlgo(newValue);
-	            System.out.println("Chosen Algorithm is : "+chosenAlgo);
 	        }
 	    });
 		
@@ -102,8 +101,6 @@ public class Controller implements Initializable {
 			// stop generating values
 			action.cancel(false);
 			
-			
-			//service.shutdown();
 			// stop scheduler
 			scheduler.shutdownNow();
 			

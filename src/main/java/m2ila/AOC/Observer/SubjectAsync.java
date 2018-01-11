@@ -1,6 +1,6 @@
 package m2ila.AOC.Observer;
 
-import m2ila.AOC.ObserverAsync;
+import m2ila.AOC.ActiveObject.ObserverAsync;
 
 public interface SubjectAsync<T> {
 	public void attach(ObserverAsync<T> o);
