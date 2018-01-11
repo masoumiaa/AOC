@@ -79,7 +79,7 @@ public class Controller implements Initializable {
 	    	gen.setChosenAlgo(this.chosenAlgo);
 	    	
 	    	// run generator
-	    	service = Executors.newScheduledThreadPool(1);
+	    	service = Executors.newScheduledThreadPool(Integer.MAX_VALUE);
 			service.scheduleAtFixedRate(gen::generate, 0, frequence, TimeUnit.MILLISECONDS);
 			
 			buttonDisplay.setDisable(true);
@@ -121,10 +121,10 @@ public class Controller implements Initializable {
     	gen.attach(c4);
     	
     	// Attach every displayer to its canal
-    	c1.attach(d1,200);
+    	c1.attach(d1,100);
     	c2.attach(d2,400);
-    	c3.attach(d3,800);
-    	c4.attach(d4,1200);
+    	c3.attach(d3,5000);
+    	c4.attach(d4,800);
 		
 	}
 	

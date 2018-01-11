@@ -1,8 +1,9 @@
 package m2ila.AOC.proxy;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import m2ila.AOC.GeneratorAsync;
 import m2ila.AOC.ObserverGeneratorAsync;
@@ -15,7 +16,7 @@ public class Canal implements GeneratorAsync,ObserverGeneratorAsync{
 	private DisplayImpl display;
 	private int latence = 0;
 	private Generator generator;
-	private ExecutorService scheduler = Executors.newFixedThreadPool(Integer.MAX_VALUE);
+	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(Integer.MAX_VALUE);
 	
 	public void attach(Observer<Generator> o, int latence) {
 		this.display = (DisplayImpl) o;
@@ -33,16 +34,10 @@ public class Canal implements GeneratorAsync,ObserverGeneratorAsync{
 	}
 	
 	public Future<Void> update(Generator subject) {
-		try {
-			Thread.sleep(latence);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return scheduler.submit(()->{
+		return scheduler.schedule(()->{
 			display.update(subject);//sync
 			return null;//void
-		});
+		},latence, TimeUnit.MILLISECONDS);
 	}
 
 }
